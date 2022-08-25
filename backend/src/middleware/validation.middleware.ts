@@ -20,7 +20,7 @@ function validationMiddleware(schema: Joi.Schema): RequestHandler{
             );
             req.body = value;
             next();
-        }catch(e){
+        }catch(e: any){
             const errors: string[] = [];
             e.details.forEach((error: Joi.ValidationErrorItem)=>{
                 errors.push(error.message)

@@ -43,7 +43,7 @@ class App {
     private initializeDatabaseConnection():void{
         const {MONGO_URI} = process.env
 
-        mongoose.connect(`{MONGO_URI}`);
+        mongoose.connect(`${MONGO_URI}`);
     }
 
     public listen(): void{
