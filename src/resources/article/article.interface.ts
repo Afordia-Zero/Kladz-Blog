@@ -5,5 +5,5 @@ export default interface Article extends Document{
     desc: string,
     photo: string,
     categories: Array<string>
-    author: string
+    author: Number
 }

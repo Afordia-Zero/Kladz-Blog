@@ -16,10 +16,12 @@ const ArticleSchema = new Schema(
             type: String,
             required: false
         },
-        categories: {
-            type: Array,
-            required: false
-        },
+        categories: [
+            {
+              type: Schema.Types.ObjectId,
+              ref: "CategoryModel"
+            }
+          ],
         author: {
             type: Schema.Types.ObjectId,
             ref: 'User'

@@ -5,7 +5,8 @@ function validateEnv():void{
         NODE_ENV:str({
             choices: ['development', 'production']
         }),
-        MONGO_URI: str()
+        MONGO_URI: str(),
+        JWT_SECRET: str()
     })
 }
 
