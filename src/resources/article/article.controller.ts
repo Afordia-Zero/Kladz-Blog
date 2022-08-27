@@ -5,7 +5,6 @@ import validationMiddleware from '@/middleware/validation.middleware';
 import validate from '@/resources/article/article.validation';
 import ArticleService from './article.service';
 import authenticated from '@/middleware/authenticated.middleware';
-
 class ArticleController implements Controller{
     public path = '/articles';
     public router = Router();
@@ -58,8 +57,14 @@ class ArticleController implements Controller{
         next: NextFunction
     ): Promise<Response | void> =>{
         try{
-            const {title, desc, photo, categories} = req.body
-            const author = req.user.id
+            const {title, desc, photo} = req.body
+            let categories = req.body.categories
+            console.log(req.body)
+            if(typeof categories === 'string'){
+                categories = [categories]
+                console.log(categories)
+            }
+            const author = req.user._id
             const article = await this.ArticleService.create(title, desc, photo, categories, author);
             res.status(201).json({article})
         }catch(e:any){
@@ -75,11 +80,11 @@ class ArticleController implements Controller{
         try{
             const update = req.body
             const articleId = req.params.id;
-            const userId = req.params.user;
+            const userId = req.user._id;
             const article = await this.ArticleService.update(articleId,userId,update);
             res.status(201).json({article})
-        }catch(e){
-            next(new HttpException(400, "Cannot update article"))
+        }catch(e: any){
+            next(new HttpException(400, e.message))
         }
     }
 
@@ -91,8 +96,9 @@ class ArticleController implements Controller{
         try{
             const articleId = req.params.id;
             await this.ArticleService.delete(articleId);
-        }catch(e){
-            next(new HttpException(400, "Cannot delete article"))
+            res.status(200).send(articleId)
+        }catch(e: any){
+            next(new HttpException(400, e.message))
         }
     }
 }

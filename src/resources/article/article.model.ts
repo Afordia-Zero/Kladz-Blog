@@ -6,7 +6,6 @@ const ArticleSchema = new Schema(
         title: {
             type: String,
             required: true,
-            unique: true
         },
         desc: {
             type: String,
@@ -24,7 +23,7 @@ const ArticleSchema = new Schema(
           ],
         author: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'UserModel'
         }
     },
     {timestamps: true}

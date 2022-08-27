@@ -1,15 +1,15 @@
 import ArticleModel from "@/resources/article/article.model";
 import Article from "@/resources/article/article.interface";
 import UserModel from "../user/user.model";
+import { Schema } from "mongoose";
 
 class ArticleService {
   private article = ArticleModel;
   private user = UserModel;
 
-
-  public async get ():Promise<Article[]> {
-    const articles = await this.article.find()
-    return articles
+  public async get(): Promise<Article[]> {
+    const articles = await this.article.find();
+    return articles;
   }
 
   // @desc creates a new article
@@ -20,55 +20,63 @@ class ArticleService {
     desc: string,
     photo: string,
     categories: Array<string>,
-    author: Number
+    author: string | Schema.Types.ObjectId
   ): Promise<Article> {
     try {
-        const article = await this.article.create({title, desc, photo, categories, author});
-        return article;
+      const article = await this.article.create({
+        title,
+        desc,
+        photo,
+        categories,
+        author,
+      });
+      return article;
     } catch (e) {
-        throw new Error('Unable to create article')
+      throw e;
     }
   }
   // @desc updates an article
   // access Private
   // route PUT /api/article
-  public async update(articleId: string, userId: string, update:Object): Promise<Article | null> {
-
+  public async update(
+    articleId: string,
+    userId: string,
+    update: Object
+  ): Promise<Article | null> {
     try {
-        const article = await this.article.findById(articleId);
-        if(!article){
-          throw new Error('Article does not exist')
+      const article = await this.article.findById(articleId).select("author");
+      if (!article) {
+        throw new Error("Article does not exist");
       }
-        const user = await this.user.findById(userId)
-        if(!user){
-          throw new Error('User not found')
+      console.log(typeof userId);
+
+      if (article.author.toString() !== userId.toString()) {
+        throw new Error("User not authorized");
       }
-        if(article.author.toString() !== user.id){
-          throw new Error('User not authorized')
-        }
-        const updatedArticle = await this.article.findByIdAndUpdate(articleId, update, {new: true})
-        return updatedArticle;
+      const updatedArticle = await this.article.findByIdAndUpdate(
+        articleId,
+        update,
+        { new: true }
+      );
+      return updatedArticle;
     } catch (e) {
-        throw new Error('Unable to update article')
+      throw e;
     }
   }
   // @desc creates a new article
   // access Private
   // route POST /api/article
-  public async delete(
-    articleId: string
-  ): Promise<string | null> {
+  public async delete(articleId: string): Promise<string | null> {
     try {
-        const article = await this.article.findById(articleId);
-        if(!article){
-          throw new Error('Article does not exist')
+      const article = await this.article.findByIdAndRemove(articleId);
+      if (!article) {
+        throw new Error("Article does not exist");
       }
-        await this.article.remove();
-        return articleId;
+      return articleId;
     } catch (e) {
-        throw new Error('Unable to delete article')
+      throw e;
     }
   }
- }
+}
 
-export default ArticleService
+export default ArticleService;

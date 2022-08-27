@@ -1,9 +1,9 @@
-import { Document } from "mongoose";
+import { Document, Schema } from "mongoose";
 
 export default interface Article extends Document{
     title: string,
     desc: string,
     photo: string,
     categories: Array<string>
-    author: Number
+    author: Schema.Types.ObjectId | string
 }
